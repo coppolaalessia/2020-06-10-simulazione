@@ -5,8 +5,11 @@
 package it.polito.tdp.imdb;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.imdb.model.Actor;
 import it.polito.tdp.imdb.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,10 +38,10 @@ public class FXMLController {
     private Button btnSimulazione; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGenere"
-    private ComboBox<?> boxGenere; // Value injected by FXMLLoader
+    private ComboBox<String> boxGenere; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxAttore"
-    private ComboBox<?> boxAttore; // Value injected by FXMLLoader
+    private ComboBox<Actor> boxAttore; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtGiorni"
     private TextField txtGiorni; // Value injected by FXMLLoader
@@ -48,12 +51,31 @@ public class FXMLController {
 
     @FXML
     void doAttoriSimili(ActionEvent event) {
-
+    	txtResult.clear();
+    	Actor a = boxAttore.getValue();
+    	
+    	if(a==null) {
+    		txtResult.appendText("Devi selezionare un attore");
+    	}
+    	
+    	List<Actor> simili = new ArrayList<Actor>(this.model.getAttoriSimili(a));
+    	
+    	for(Actor attore: simili) {
+    		txtResult.appendText(attore.toString());
+    	}
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	if(boxGenere.getValue()== null) {
+    		txtResult.setText("Selezionare un genere");
+    		return;
+    	}
+    	this.model.creaGrafo(boxGenere.getValue());
+    	txtResult.appendText("GRAFO CREATO \n");
+    	txtResult.appendText("VERTICI: " + this.model.getNVertici()+ "\n");
+    	txtResult.appendText("ARCHI: " + this.model.getNArchi()+ "\n");
     }
 
     @FXML
@@ -75,5 +97,8 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.boxGenere.getItems().addAll(this.model.getGenres());
+    	this.boxAttore.getItems().addAll(this.model.getVertici());
+    	this.txtResult.setEditable(false);
     }
 }

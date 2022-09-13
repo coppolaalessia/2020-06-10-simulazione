@@ -69,5 +69,8 @@ public class Actor{
 		return true;
 	}
 
+	public int compareTo(Actor other) {
+		return this.lastName.compareTo(other.getLastName());
+	}
 	
 }
